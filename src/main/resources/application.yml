@@ -1,0 +1,83 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: HelloWorld
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql-service:23306/HelloWorld-08c666?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: HelloWorld
+    password: HelloWorld_rw
+    hikari:
+      auto-commit: true
+      idle-timeout: 180000
+      pool-name: HelloWorld-08c666.server-HikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+      maximum-pool-size: 10
+      minimum-idle: 10
+  flyway:
+    enabled: true
+    encoding: utf-8
+    check-location: true
+    # 禁止清理数据库表
+    clean-disabled: true
+    # 数据库不是空表的话需要设置
+    baseline-on-migrate: true
+    baseline-version: 0
+    # 需要执行的脚本
+    locations: classpath:db/migration
+logging:
+  path: /app/logs/HelloWorld
+###################################### isyscore 应用配置 ##########################################
+isyscore:
+  appCode: HelloWorld-08c666
+  appName: HelloWorld
+  # 权限注册
+  aclApi: http://${isyscore.appCode}-svc:${server.port}/api/${isyscore.appCode}/auth/getAuthListForOs
+  autoRegisterAclApi: true
+  # API 网关地址：服务网关地址配置, IP 一般为本地 OS 实例部署所在的服务器 网络 IP
+  serverHost: http://isc-route-service:31000
+  # APPID：APPID 由平台分配(现阶段开放平台未公开发布, 可通过 UUID.random 生成)
+  appId: 07bf1a4e-7cda-4273-8fdc-b1ab635bee90
+  # 数据交互格式：交互数据描述格式, 暂时仅支持 JSON
+  format: JSON
+  # 字符集：交互数据字符集, 暂时仅支持 UTF-8
+  charset: UTF-8
+  # 签名类型：服务访问签名类型, 暂时仅支持 RSA
+  signType: RSA
+  # 加密类型：服务访问数据加密类型, 暂时仅支持 RSA
+  encryptType: RSA
+  # 本地操作系统：实例 ID OSID 由平台分配(现阶段开放平台未公开发布, 可通过 UUID.random 生成): OSID 标记了每一个本地 OS 实例的唯一 性, 平台通过 OSID 对所有本地 OS 实例进行管理(包括版本, 升级, 其他服务等支持) 每个本地 OS 实例安装部署自动生成且仅生成一次 OSID.不可 修改与删除.
+  # osId: 0
+  # 服务id
+  serviceId: HelloWorld-08c666
+  # 服务路径
+  servicePath: /api/app/HelloWorld-08c666/**
+  # 服务名
+  serviceName: HelloWorld
+  # 服务地址
+  serviceUrl: http://HelloWorld-08c666-svc:${server.port}
+  isMainService: true
+  # 注册应用地址
+  registerAppUrl: http://isc-rc-application-service:34200
+
+# ios系统内部定义
+api-module: app/HelloWorld-08c666
+
+# controller前缀
+api-prefix: api/${api-module}
+
+###################################### isyscore 权限 ##########################################
+cas:
+  app-code: ${isyscore.appCode}
+  app-name: ${isyscore.appName}
+  ssoUrl: http://isc-sso-service:32200
+  # 拦截访问地址规则，多个用英文逗号隔离
+  # urlPatterns: /api/app/HelloWorld-08c666/*
+  # 不拦截访问地址规则
+  excludeUrlPatterns:
+    # - /api/app/HelloWorld-08c666/auth/*
+    - /**
